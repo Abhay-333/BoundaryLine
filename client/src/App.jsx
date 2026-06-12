@@ -11,7 +11,6 @@ import { Users, Layout } from "lucide-react";
 const BoundaryLineApp = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, role, user } = useSelector((state) => state.auth);
-
   // Active view router: "SCOREBOARD" or "SCORER_CONSOLE"
   const [activeLayout, setActiveLayout] = useState("SCORER_CONSOLE");
 
