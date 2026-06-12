@@ -1,5 +1,5 @@
-import { BrandPanel } from './components/BrandPanel'
-import { LoginForm } from './components/LoginForm'
+import { BrandPanel } from '../../features/admin-login/components/BrandPanel'
+import { LoginForm } from '../../features/admin-login/components/LoginForm'
 
 export const AdminLoginPage = () => {
   return (

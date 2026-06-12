@@ -1,1 +1,2 @@
-export { AdminLoginPage } from './AdminLoginPage'
+export { BrandPanel } from './components/BrandPanel'
+export { LoginForm } from './components/LoginForm'

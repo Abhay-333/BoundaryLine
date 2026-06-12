@@ -1,4 +1,4 @@
-import { AdminLoginPage } from './features/admin-login'
+import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 
 const App = () => {
   return (
