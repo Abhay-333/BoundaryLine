@@ -68,9 +68,13 @@ export const LoginForm = () => {
             <label className="text-sm font-semibold uppercase text-[#c7d0c9]" htmlFor="password">
               Password
             </label>
-            <a className="text-sm font-semibold text-[#9adca7] hover:text-[#9be63d]" href="#forgot-password">
+            <button
+              className="cursor-not-allowed bg-transparent p-0 text-sm font-semibold text-[#9adca7]/70"
+              disabled
+              type="button"
+            >
               Forgot password?
-            </a>
+            </button>
           </div>
           <span className="flex items-center rounded-lg border border-[#38423d] bg-[#191d20] px-4 focus-within:border-[#9adca7] focus-within:shadow-[0_0_0_3px_rgba(154,220,167,0.16)]">
             <span className="mr-3 text-lg font-bold text-[#8e9990]" aria-hidden="true">#</span>
@@ -133,9 +137,13 @@ export const LoginForm = () => {
 
       <p className="mt-8 text-center text-base text-[#cbd4cd]">
         Need an admin account?{' '}
-        <a className="font-bold text-[#9adca7] underline underline-offset-4 hover:text-[#9be63d]" href="#request-access">
+        <button
+          className="cursor-not-allowed bg-transparent p-0 font-bold text-[#9adca7]/70 underline underline-offset-4"
+          disabled
+          type="button"
+        >
           Request access
-        </a>
+        </button>
       </p>
     </div>
   )
