@@ -1,8 +1,8 @@
-import { AdminLoginPage } from './pages/admin/AdminLoginPage'
+import { TestRouter } from './routes/TestRouter'
 
 const App = () => {
   return (
-    <AdminLoginPage />
+    <TestRouter />
   )
 }
 
