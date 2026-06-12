@@ -1,57 +1,131 @@
-# Scoreboard Hooks
+# Scorer Console Custom Hooks
 Commit ID: [PENDING]
-Feature Added: Scoreboard Derived Stats Hook
+Feature Added: Scorer Console Custom Hooks Extraction
 Date: 12-06-2026
 
 ## Files Added
-- src/features/scoreboard/hooks/useMatchDerivedStats.js
+- src/features/scorer-console/hooks/useWicketFlow.js
+- src/features/scorer-console/hooks/useMatchSetup.js
+- src/features/scorer-console/hooks/useRosterImporter.js
 
 ---
 
-## useMatchDerivedStats
+## useWicketFlow
 
 ### What it does
-Reads match state from Redux and returns all pre-calculated cricket statistics using memoization.
+Manages all wicket dismissal flow state and logic. Handles wicket type selection, batter out tracking, fielder/keeper assignment, and incoming batter selection.
 
 ### Purpose in application
-Replaces hardcoded inline CRR/RRR calculations that were inside ScoreboardPage.jsx. Single source of derived stats for the entire scoreboard.
+Extracted from ScorerConsolePage.jsx to keep the page component clean. Opens the wicket modal with pre-filled state and dispatches the dismissal to Redux on confirmation.
 
 ### Who can use this
-Any developer building scoreboard widgets, stat cards, analytics panels, or any component that needs live match numbers.
+Any developer building a scoring interface that needs wicket dismissal flow.
 
 ### How to use
 ```js
-import { useMatchDerivedStats } from "../hooks/useMatchDerivedStats.js"
+import { useWicketFlow } from "../hooks/useWicketFlow.js"
 
 const {
-  activeInnings,
-  totalBallsBowled,
-  totalOvers,
-  crr,
-  rrr,
-  projectedScore,
-  target,
-  isSecondInnings
-} = useMatchDerivedStats()
+  wicketType, setWicketType,
+  outBatterId, setOutBatterId,
+  fielderId, setFielderId,
+  keeperId, setKeeperId,
+  newBatterId, setNewBatterId,
+  initWicketFlow,
+  confirmWicket
+} = useWicketFlow({ match, activeInnings, dispatch, setActiveModal })
 ```
 
-### No props required
-This hook reads from Redux directly. Just call it inside any component.
-
-### Return Value Reference
-| Value | Type | Description |
+### Required Props
+| Prop | Type | Description |
 |---|---|---|
-| activeInnings | object | Current innings object |
-| totalBallsBowled | number | Total balls bowled as integer |
-| totalOvers | string | Overs in "X.Y" format |
-| crr | number | Current run rate rounded to 2 decimals |
-| rrr | number | Required run rate (0 in first innings) |
-| projectedScore | number | Projected final score based on current rate |
-| target | number or null | Target runs (null in first innings) |
-| isSecondInnings | boolean | True if currentInningsNum is 2 |
+| match | object | Current match object from Redux |
+| activeInnings | object | Current innings from match.innings array |
+| dispatch | function | Redux dispatch function |
+| setActiveModal | function | Modal state setter from parent page |
 
-### Important Notes
-- Uses useMemo internally — safe to call in frequently re-rendering components
-- rrr returns 0 in first innings automatically
-- target returns null in first innings automatically
-- Depends on match.totalOvers being set correctly in Redux state
+### Exposed Functions
+| Function | Description |
+|---|---|
+| initWicketFlow() | Opens WICKET_FLOW modal with pre-filled striker and bowler |
+| confirmWicket() | Validates and dispatches commitWicketState to Redux |
+
+---
+
+## useMatchSetup
+
+### What it does
+Manages the complete 5-step match setup wizard state including toss configuration, dynamic match creation, and opening player role assignments.
+
+### Purpose in application
+Extracted from ScorerConsolePage.jsx. Drives the setup wizard before a match goes live.
+
+### Who can use this
+Any developer building a match creation flow or setup wizard screen.
+
+### How to use
+```js
+import { useMatchSetup } from "../hooks/useMatchSetup.js"
+
+const {
+  setupStep, setSetupStep,
+  tossWinner, setTossWinner,
+  tossDecision, setTossDecision,
+  wizardStrikerId, wizardNonStrikerId, wizardBowlerId,
+  handleCreateDynamicMatch,
+  initWizardOpeningRoles,
+  handleStartMatch
+} = useMatchSetup({ match, selectedXI_A, selectedXI_B, dispatch })
+```
+
+### Required Props
+| Prop | Type | Description |
+|---|---|---|
+| match | object | Current match object from Redux |
+| selectedXI_A | array | Selected playing 11 for Team A |
+| selectedXI_B | array | Selected playing 11 for Team B |
+| dispatch | function | Redux dispatch function |
+
+### Exposed Functions
+| Function | Description |
+|---|---|
+| handleCreateDynamicMatch(e) | Creates a new dynamic match and advances to step 2 |
+| initWizardOpeningRoles() | Pre-fills striker, non-striker, bowler from selected XI |
+| handleStartMatch() | Validates all setup data and dispatches startMatchSetup |
+
+---
+
+## useRosterImporter
+
+### What it does
+Handles both manual single player entry and bulk XLSX import simulation. Manages player name and role input state.
+
+### Purpose in application
+Extracted from ScorerConsolePage.jsx. When real SheetJS XLSX parsing is implemented, only this hook needs updating.
+
+### Who can use this
+Any developer building roster management, player registration, or bulk import features.
+
+### How to use
+```js
+import { useRosterImporter } from "../hooks/useRosterImporter.js"
+
+const {
+  newPlayerName, setNewPlayerName,
+  newPlayerRole, setNewPlayerRole,
+  handleAddManualPlayer,
+  handleXLSXImportSimulation
+} = useRosterImporter({ match, dispatch })
+```
+
+### Required Props
+| Prop | Type | Description |
+|---|---|---|
+| match | object | Current match object from Redux (needs teamA.id, teamB.id) |
+| dispatch | function | Redux dispatch function |
+
+### Exposed Functions
+| Function | Description |
+|---|---|
+| handleAddManualPlayer("A" or "B") | Adds single player to team roster in Redux |
+| handleXLSXImportSimulation("A" or "B") | Bulk imports 11 mock players into team roster |
