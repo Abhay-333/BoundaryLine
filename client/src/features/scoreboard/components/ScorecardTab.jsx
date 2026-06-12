@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 export const ScorecardTab = () => {
   const match = useSelector((state) => state.match.currentMatch);
   const activeInnings = match.innings[match.currentInningsNum - 1];
-
   return (
     <div className="flex flex-col gap-6 font-sans">
       {/* Batting Scorecard Card */}

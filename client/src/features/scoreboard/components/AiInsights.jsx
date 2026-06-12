@@ -3,7 +3,6 @@ import { BrainCircuit, TrendingUp, AlertTriangle } from "lucide-react";
 
 export const AiInsights = () => {
   const match = useSelector((state) => state.match.currentMatch);
-
   return (
     <div className="p-5 rounded-2xl bg-zinc-950/40 backdrop-blur-md border border-emerald-500/10 flex flex-col gap-4">
       <div className="flex items-center gap-2">

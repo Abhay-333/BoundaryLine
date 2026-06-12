@@ -4,7 +4,6 @@ export const OverTimeline = ({
   label = "THIS OVER",
 }) => {
   const renderedBalls = balls.slice(-maxDisplay);
-
   // Helper to color-code cricket ball results exactly matching professional scorecards
   const getBallStyles = (ball) => {
     const b = ball.toUpperCase();

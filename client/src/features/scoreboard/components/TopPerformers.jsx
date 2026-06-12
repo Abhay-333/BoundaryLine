@@ -9,7 +9,6 @@ export const TopPerformers = () => {
           Top Performers
         </h3>
       </div>
-
       <div className="flex flex-col gap-3">
         {/* MVP Batter */}
         <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/50 border border-white/5 hover:border-white/10 transition-colors duration-200">

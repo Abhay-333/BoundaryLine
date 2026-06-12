@@ -13,7 +13,6 @@ export const WinProbability = ({
         <MoveUpRight className="w-4 h-4 text-emerald-400" />
         Win Probability
       </div>
-
       {/* Percentage slider */}
       <div className="w-full flex items-center justify-between font-mono text-sm font-semibold mb-1">
         <span className="text-emerald-400">{teamAName} {teamAPct}%</span>

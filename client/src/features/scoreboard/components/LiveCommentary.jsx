@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 
 export const LiveCommentary = () => {
   const currentMatch = useSelector((state) => state.match.currentMatch);
-
   // Helper styles for commentary categories
   const getCategoryTheme = (type) => {
     switch (type) {

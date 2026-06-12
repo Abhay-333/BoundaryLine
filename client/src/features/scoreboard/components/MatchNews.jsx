@@ -1,5 +1,4 @@
 import { Newspaper, ChevronRight } from "lucide-react";
-
 export const MatchNews = () => {
   return (
     <div className="p-5 rounded-2xl glass-card border border-white/5 flex flex-col gap-4">

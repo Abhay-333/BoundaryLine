@@ -19,7 +19,6 @@ export const PlayingXITab = () => {
     { name: "Ravindra Jadeja", role: "ALL_ROUNDER" },
     { name: "Jasprit Bumrah", role: "BOWLER" },
   ];
-
   const defaultPlayersB = [
     { name: "Travis Head", role: "BATTER" },
     { name: "David Warner", role: "BATTER" },
