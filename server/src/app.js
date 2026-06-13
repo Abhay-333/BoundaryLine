@@ -2,6 +2,7 @@ import express from "express";
 import env from "./config/env.js"
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import compression from "compression";
 
 export default function createApp(){
     const app = express();
@@ -9,6 +10,8 @@ export default function createApp(){
     if(env.NODE_ENV === "production"){
         app.use(morgan("dev"));
     }
+
+
 
     // rate limiter added to ensure maximum 100 requests per 15 minutes per ip address
     app.use(rateLimit({
@@ -22,6 +25,14 @@ export default function createApp(){
     app.use(express.json({limit: "3mb"})); // limiting req.body to max 10mb
     app.use(express.urlencoded({extended: true, limit: "3mb"})) // limitng html form data to max 10mb
 
+    // adding compression middleware to reduce the size of the response bodies
+    app.use(compression());
+
+    /**
+     * @method GET
+     * @route /health
+     * @description to check the status of the server
+     * */ 
     app.get("/health", (req,res)=>{
         res.json({
             message: "healthy"
