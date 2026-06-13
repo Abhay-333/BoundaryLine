@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import matchReducer from "../../features/scoreboard/store/mathSlice.js";
-import { UserRole } from "../../type.js";
+import { UserRole } from "../../features/scorer-console/pages/type.js";
 
 const authPlaceholderSlice = createSlice({
   name: "auth",
@@ -30,7 +30,7 @@ const authPlaceholderSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      state.role = UserRole.VIEWER;
+      state.role = UserRole.SCORER;
       state.token = null;
       state.isAuthenticated = false;
     },
