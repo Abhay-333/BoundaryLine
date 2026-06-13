@@ -1,9 +1,12 @@
-import React from "react";
-import CricPulse from "./features/landing page/pages/LandingPage";
-import ScorerWorkspace from "./features/scorer-console/pages/ScorerWorkspace";
+import RootProvider from "./app/providers/RootProviders.jsx";
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 const App = () => {
-  return <div>App</div>;
+  return (
+    <RootProvider>
+      <AppRoutes />
+    </RootProvider>
+  );
 };
 
 export default App;

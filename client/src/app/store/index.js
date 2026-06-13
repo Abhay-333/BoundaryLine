@@ -10,7 +10,7 @@ const authPlaceholderSlice = createSlice({
       username: "boundaryline_scorer",
       email: "ommhatre379@gmail.com",
     },//s
-    role: UserRole.SCORER, // Default to SCORER so scorer controls are active!
+    role: UserRole.ADMIN, // Default to SCORER so scorer controls are active!
     token: "jwt-test-token",
     isAuthenticated: true,
   },
