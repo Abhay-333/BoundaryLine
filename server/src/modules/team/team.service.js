@@ -35,25 +35,23 @@ class TeamService {
   async createTeam(payload) {
     // What: create a team after checking identity uniqueness.
     // Why: duplicate team names or short codes break selectors and scoreboards.
-    // How: normalize the payload, search for existing name/shortName, then insert.
-    const normalizedPayload = this.normalizeTeamPayload(payload);
-    await this.ensureUniqueTeam(normalizedPayload.name, normalizedPayload.shortName);
+    // How: check the validated payload, then let the schema handle persistence transforms.
+    await this.ensureUniqueTeam(payload.name, payload.shortName);
 
-    return this.teamRepository.create(normalizedPayload);
+    return this.teamRepository.create(payload);
   }
 
   async updateTeam(teamId, payload) {
     // What: update team fields safely.
     // Why: partial edits should not create duplicate team names or short codes.
-    // How: load current team, merge identity fields, then run uniqueness checks.
+    // How: load current team, merge identity fields, then let the schema handle persistence transforms.
     const currentTeam = await this.getTeamById(teamId);
-    const normalizedPayload = this.normalizeTeamPayload(payload);
-    const nextName = normalizedPayload.name ?? currentTeam.name;
-    const nextShortName = normalizedPayload.shortName ?? currentTeam.shortName;
+    const nextName = payload.name ?? currentTeam.name;
+    const nextShortName = payload.shortName ?? currentTeam.shortName;
 
     await this.ensureUniqueTeam(nextName, nextShortName, teamId);
 
-    const updatedTeam = await this.teamRepository.updateById(teamId, normalizedPayload);
+    const updatedTeam = await this.teamRepository.updateById(teamId, payload);
 
     if (!updatedTeam) {
       // What: guard against a race where the team was deleted after the first lookup.
@@ -110,16 +108,6 @@ class TeamService {
     // Why: shortName is used heavily in scorecards and match rows.
     // How: throw a 409 conflict AppError.
     throw AppError.conflict("Team short name already exists");
-  }
-
-  normalizeTeamPayload(payload) {
-    // What: normalize team write payloads before database work.
-    // Why: short codes must stay consistent across creates, updates, and uniqueness checks.
-    // How: copy the payload and uppercase shortName only when it is provided.
-    return {
-      ...payload,
-      ...(payload.shortName ? { shortName: payload.shortName.toUpperCase() } : {}),
-    };
   }
 }
 

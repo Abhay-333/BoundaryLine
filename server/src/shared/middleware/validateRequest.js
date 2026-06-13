@@ -1,3 +1,4 @@
+import { z } from "zod";
 import AppError from "../errors/AppError.js";
 
 export function validateRequest(schema) {
@@ -17,8 +18,8 @@ export function validateRequest(schema) {
     if (!result.success) {
       // What: stop invalid requests before they reach service classes.
       // Why: services should not need to defend against malformed payload shapes.
-      // How: forward a 400 AppError with the formatted Zod issue details.
-      next(AppError.badRequest("Validation failed", result.error.format()));
+      // How: forward a 400 AppError with Zod 4's structured error tree.
+      next(AppError.badRequest("Validation failed", z.treeifyError(result.error)));
       return;
     }
 
