@@ -6,8 +6,9 @@ import securityMiddleware from "./middlewares/security.middleware.js";
 export default function createApp(){
     const app = express();
 
+    // this code will only work in production
     if(env.NODE_ENV === "production"){
-        app.use(morgan("dev"));
+        app.use(morgan(env.MORGAN_LOGGER));
     }
 
     securityMiddleware(app); // security middleware added 

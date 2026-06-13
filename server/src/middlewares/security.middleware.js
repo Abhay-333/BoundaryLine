@@ -3,6 +3,7 @@ import compression from "compression";
 import helmet from "helmet";
 import hpp from "hpp";
 import express from "express";
+import env from "../config/env.js"
 
 export default function securityMiddleware(app){
     // adding security headers
@@ -13,8 +14,8 @@ export default function securityMiddleware(app){
 
     // rate limiter added to ensure maximum 100 requests per 15 minutes per ip address
     app.use(rateLimit({
-        windowMs: 15 * 60 * 1000,
-        max: 100,
+        windowMs: env.RATELIMIT_WINDOWMS,
+        max: env.RATELIMIT_MAX,
         legacyHeaders: true,
         message: "Too many requests try again after few minutes."
     }))

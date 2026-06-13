@@ -7,12 +7,14 @@ const envSchema = z.object({
     PORT: z.coerce.number().default(appConstant.PORT),
     MONGO_URI: z.string().default(appConstant.MONGO_URI),
     NODE_ENV: z.string().default(appConstant.NODE_ENV),
-    LOGGER_LEVEL: z.string().default(appConstant.LOGGER_LEVEL)
+    LOGGER_LEVEL: z.string().default(appConstant.LOGGER_LEVEL),
+    MORGAN_LOGGER : z.string().default(appConstant.MORGAN_LOGGER),
+    RATELIMIT_WINDOWMS: z.coerce.number().default(appConstant.RATELIMIT_WINDOWMS),
+    RATELIMIT_MAX: z.coerce.number().default(appConstant.RATELIMIT_MAX)
 })
 
 // parsing env for correct format
 const parsed = envSchema.safeParse(process.env);
-
 
 if(!parsed.success){
     console.error(parsed.error.format());
