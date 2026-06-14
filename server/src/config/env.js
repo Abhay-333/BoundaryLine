@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import {z} from "zod";
 import appConstant from "../constant/app.constant.js";
 dotenv.config();
+
 // creating zod object to validate env Schema
 const envSchema = z.object({
     PORT: z.coerce.number().default(appConstant.PORT),
@@ -12,7 +13,10 @@ const envSchema = z.object({
     RATELIMIT_WINDOWMS: z.coerce.number().default(appConstant.RATELIMIT_WINDOWMS),
     RATELIMIT_MAX: z.coerce.number().default(appConstant.RATELIMIT_MAX),
     CORS_ORIGIN: z.string().default(appConstant.CORS_ORIGIN),
-    DATA_LIMIT: z.string().default(appConstant.DATA_LIMIT)
+    DATA_LIMIT: z.string().default(appConstant.DATA_LIMIT),
+    GOOGLE_CLIENT_ID:z.string(),
+    GOOGLE_CLIENT_SECRET:z.string(),
+    GOOGLE_CALLBACK_URL:z.string(),
 })
 
 // parsing env for correct format
@@ -21,4 +25,5 @@ const parsed = envSchema.safeParse(process.env);
 if(!parsed.success){
     console.error(parsed.error.format());
 }
+
 export default parsed.data;
