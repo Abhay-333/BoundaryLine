@@ -1,3 +1,6 @@
+import { StatusCodes } from "http-status-codes";
+import ApiResponse from "../../shared/utils/ApiResponse.js";
+
   /**
    * @method GET
    * @route /health
@@ -5,8 +8,6 @@
    * */
 export default class HealthController{
     CheckHealth(req, res){
-        res.status(200).json({
-            message: "healthy"
-        })
+        return new ApiResponse(StatusCodes.OK, "Working").send(res);
     }
 }
