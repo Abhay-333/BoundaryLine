@@ -5,4 +5,14 @@ export default class ApiResponse{
         this.message = message;
         this.success = statusCode < 400; 
     }
+
+    send(res){
+        return res
+        .status(this.statusCode)
+        .json({
+            message: this.message,
+            data: this.data,
+            success:this.success
+        })
+    }
 }
