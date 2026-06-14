@@ -1,4 +1,4 @@
-import { Commentary } from "./commentary.model.js";
+import { Commentary } from "../model/commentary.model.js";
 
 class CommentaryRepo {
   async create(payload) {
@@ -30,3 +30,4 @@ class CommentaryRepo {
 }
 
 export default new CommentaryRepo();
+
