@@ -1,5 +1,4 @@
 import express from "express";
-import googleOAuthMiddleware from "../../middlewares/googleOAuth.middleware";
 import passport from "passport";
 
 const router = express.Router();
