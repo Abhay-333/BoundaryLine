@@ -1,6 +1,7 @@
 import CommentaryRepository from "../../repository/commentary.respository.js"
 import Match from "../../model/match.model.js";
-import { BadRequestError, NotFoundError } from "../../shared/errors/index.js";
+import BadRequest from "../../shared/error/BadRequest.js";
+import NotFound from "../../shared/error/NotFound.js";
 import { logger } from "../../shared/utils/logger.js";
 import { emitToMatch } from "../../shared/socket/emitToMatch.js";
 
@@ -23,7 +24,7 @@ class CommentaryService {
     if (!match) {
       //finds if the match is existed in the database or not
       logger.warn({ matchId }, "Match not FOUND during VALIDATION");
-      throw new NotFoundError("Match Not Found or is Deleted");
+      throw new NotFound("Match Not Found or is Deleted");
     }
     const liveStatuses = ["LIVE", "INNINGS_BREAK"]; //Commentary is allowed on these status
 
@@ -33,7 +34,7 @@ class CommentaryService {
         { matchId, status: match.status },
         "Commentary modified on a non-live match",
       );
-      throw new BadRequestError(
+      throw new BadRequest(
         `Match is not live(current status is:${match.status})`,
       );
     }
@@ -114,7 +115,7 @@ class CommentaryService {
 
     if (!commentary ) {
       logger.warn({ commentaryId: id }, "Commentary entry not found");
-      throw new NotFoundError("Commentary entry not found");
+      throw new NotFound("Commentary entry not found");
     }
 
     // idr thodese basic constraints hai jese ki
