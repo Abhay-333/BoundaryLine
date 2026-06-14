@@ -1,13 +1,13 @@
 // Admin Dashboard DTO Dashboard response clean format me convert karega
 export default class AdminDashboardDTO {
-  constructor(dashboardData = {}) {
-    this.totalMatches = dashboardData.totalMatches ?? 0;
-    this.totalUsers = dashboardData.totalUsers ?? 0;
-    this.totalPlayers = dashboardData.totalPlayers ?? 0;
-    this.totalTeams = dashboardData.totalTeams ?? 0;
-    this.activeLiveMatches = dashboardData.activeLiveMatches ?? 0;
-    this.completedMatches = dashboardData.completedMatches ?? 0;
-    this.lastUpdated = dashboardData.lastUpdated ?? null;
-    this.updatedBy = dashboardData.updatedBy ?? null;
+  constructor(data = {}) {
+    this.totalMatches = data.totalMatches ?? 0;
+    this.totalUsers = data.totalUsers ?? 0;
+    this.totalPlayers = data.totalPlayers ?? 0;
+    this.totalTeams = data.totalTeams ?? 0;
+    this.activeLiveMatches = data.activeLiveMatches ?? 0;
+    this.completedMatches = data.completedMatches ?? 0;
+    this.lastUpdated = data.lastUpdated ?? null;
+    this.updatedBy = data.updatedBy ?? null;
   }
 }
