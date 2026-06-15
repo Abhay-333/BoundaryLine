@@ -1,79 +1,58 @@
 import { Router } from "express";
-
+import { validateRequest } from "../../../middleware/validateRequest.js";
 import SeriesController from "./series.controller.js";
-
-import { validate } from "../../../shared/middlewares/validate.js";
-
-import {
-  authMiddleware,
-  authorizationMiddleware,
-} from "../../../middlewares/auth.middleware.js";
-
 import {
   createSeriesSchema,
   updateSeriesSchema,
   seriesIdSchema,
-} from "./series.validation.js";
-
-import { ROLES } from "../../../constant/roles.constant.js";
-
-const router = Router();
-
-const seriesController = new SeriesController();
-
-/**
- * Public Routes
- */
-
-router.get(
-  "/",
-  seriesController.listSeries
-);
-
-router.get(
-  "/:id",
-  validate(seriesIdSchema),
-  seriesController.getSeries
-);
-
-/**
- * Protected Routes
- */
-
-router.post(
-  "/",
+} from "../../../validators/series.validator.js";
+import {
   authMiddleware,
-  authorizationMiddleware([
-    ROLES.SUPER_ADMIN,
-    ROLES.ADMIN,
-  ]),
-  validate(createSeriesSchema),
-  seriesController.createSeries
-);
+  authorizationMiddleware,
+} from "../../../middleware/auth.middleware.js";
+import { ROLES } from "../../../constant/role.constant.js";
 
-router.patch(
-  "/:id",
-  authMiddleware,
-  authorizationMiddleware([
-    ROLES.SUPER_ADMIN,
-    ROLES.ADMIN,
-  ]),
-  validate({
-    ...seriesIdSchema,
-    ...updateSeriesSchema,
-  }),
-  seriesController.updateSeries
-);
+class SeriesRoute {
+  constructor(seriesController = new SeriesController()) {
+    this.router = Router();
+    this.seriesController = seriesController;
+    this.registerRoutes();
+  }
 
-router.delete(
-  "/:id",
-  authMiddleware,
-  authorizationMiddleware([
-    ROLES.SUPER_ADMIN,
-    ROLES.ADMIN,
-  ]),
-  validate(seriesIdSchema),
-  seriesController.deleteSeries
-);
+  registerRoutes() {
+    this.router.post(
+      "/",
+      authMiddleware,
+      authorizationMiddleware([ROLES.SUPER_ADMIN, ROLES.ADMIN]),
+      validateRequest(createSeriesSchema),
+      this.seriesController.createSeries,
+    );
 
-export default router;
+    this.router.patch(
+      "/:id",
+      authMiddleware,
+      authorizationMiddleware([ROLES.SUPER_ADMIN, ROLES.ADMIN]),
+      validateRequest({
+        ...seriesIdSchema,
+        ...updateSeriesSchema,
+      }),
+      this.seriesController.updateSeries,
+    );
+
+    this.router.delete(
+      "/:id",
+      authMiddleware,
+      authorizationMiddleware([ROLES.SUPER_ADMIN, ROLES.ADMIN]),
+      validateRequest(seriesIdSchema),
+      this.seriesController.deleteSeries,
+    );
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
+
+const seriesRoute = new SeriesRoute();
+
+export default seriesRoute.getRouter();

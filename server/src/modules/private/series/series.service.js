@@ -1,49 +1,52 @@
-import SeriesRepository from "../../../repository/series.repository";
-import NotFound from "../../../shared/error/NotFound";
+import SeriesRepository from "../../../repository/series.repository.js";
+import NotFound from "../../../shared/error/NotFound.js";
 
 class SeriesService {
-    constructor(){
-        this.seriesRepository = SeriesRepository;
+  constructor(seriesRepository = new SeriesRepository()) {
+    this.seriesRepository = seriesRepository;
+  }
+
+  async getSeries() {
+    return this.seriesRepository.findAll();
+  }
+
+  async getSeriesById(seriesId) {
+    const series = await this.seriesRepository.findById(seriesId);
+    if (!series) {
+      throw new NotFound("Series not found");
+    }
+    return series;
+  }
+
+  async createSeries(payload) {
+    return this.seriesRepository.create(payload);
+  }
+
+  async updateSeries(seriesId, payload) {
+    await this.getSeriesById(seriesId);
+
+    const updatedSeries = await this.seriesRepository.updateById(
+      seriesId,
+      payload,
+    );
+
+    if (!updatedSeries) {
+      throw new NotFound("Series not found");
     }
 
-    async getSeries(){
-        return this.seriesRepository.findAll();
+    return updatedSeries;
+  }
+
+  async deleteSeries(seriesId) {
+    await this.getSeriesById(seriesId);
+    const deletedSeries = await this.seriesRepository.softDeleteById(seriesId);
+
+    if (!deletedSeries) {
+      throw new NotFound("Series not found");
     }
 
-    async getSeriesById(seriesId){
-        return this.seriesRepository.findbyId(seriesId);
-    }
-
-    async createSeries(payload){
-        return this.seriesRepository.create(payload);
-    }
-
-    async updateSeries(seriesId, payload){
-        const currentTournament = await this.seriesRepository.findById(seriesId);
-        
-        const nextName = payload.name ?? currentTournament.name;
-
-        if(payload.name){
-            // check if unique tournament name
-
-        }
-
-        const updatedTournament = await this.seriesRepository.updatedById(seriesId, payload);
-        
-        if(!updatedTournament){
-            throw new NotFound("Tournament Not Found");
-        }
-    }
-
-    async deleteSeries(seriesId){
-        const deletedTeam = await this.seriesRepository.softDeleteById();
-
-        if(!deletedTeam){
-            throw new NotFound("Tournament Not Found");
-        }
-
-        return deletedTeam;
-    }
-
-
+    return deletedSeries;
+  }
 }
+
+export default SeriesService;

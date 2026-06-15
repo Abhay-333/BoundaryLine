@@ -1,70 +1,39 @@
 import { asyncHandler } from "../../../shared/utils/asyncHandler.js";
 import ApiResponse from "../../../shared/utils/ApiResponse.js";
 import SeriesService from "./series.service.js";
-import { StatusCodes } from "http-status-codes";
 
 class SeriesController {
   constructor(seriesService = new SeriesService()) {
     this.seriesService = seriesService;
   }
 
-  listSeries = asyncHandler(async (req, res) => {
-    const series = await this.seriesService.getSeries();
-
-    return new ApiResponse(
-      StatusCodes.OK,
-      "Series fetched successfully",
-      series
-    ).send(res);
-  });
-
-  getSeries = asyncHandler(async (req, res) => {
-    const series = await this.seriesService.getSeriesById(
-      req.validated.params.id
-    );
-
-    return new ApiResponse(
-      StatusCodes.OK,
-      "Series fetched successfully",
-      series
-    ).send(res);
-  });
-
   createSeries = asyncHandler(async (req, res) => {
-    const series = await this.seriesService.createSeries(
-      req.validated.body
-    );
+    const series = await this.seriesService.createSeries(req.validated.body);
 
-    return new ApiResponse(
-      StatusCodes.CREATED,
-      "Series created successfully",
-      series
-    ).send(res);
+    return new ApiResponse(201, "Series created successfully", series).send(
+      res,
+    );
   });
 
   updateSeries = asyncHandler(async (req, res) => {
     const series = await this.seriesService.updateSeries(
       req.validated.params.id,
-      req.validated.body
+      req.validated.body,
     );
 
-    return new ApiResponse(
-      StatusCodes.OK,
-      "Series updated successfully",
-      series
-    ).send(res);
+    return new ApiResponse(200, "Series updated successfully", series).send(
+      res,
+    );
   });
 
   deleteSeries = asyncHandler(async (req, res) => {
     const series = await this.seriesService.deleteSeries(
-      req.validated.params.id
+      req.validated.params.id,
     );
 
-    return new ApiResponse(
-      StatusCodes.OK,
-      "Series deleted successfully",
-      series
-    ).send(res);
+    return new ApiResponse(200, "Series deleted successfully", series).send(
+      res,
+    );
   });
 }
 
