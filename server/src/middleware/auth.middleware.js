@@ -80,11 +80,11 @@ class AuthMiddleware {
   }
 }
 
-const authMiddleware = new AuthMiddleware();
+const authGuard = new AuthMiddleware();
 
-export const authenticate = authMiddleware.authenticate.bind(authMiddleware);
+export const authenticate = authGuard.authenticate.bind(authGuard);
 
-export const authorize = authMiddleware.authorize.bind(authMiddleware);
+export const authorize = authGuard.authorize.bind(authGuard);
 
 export const authMiddleware = asyncHandler((req, res, next) => {
   const token = req.cookies.accessToken;

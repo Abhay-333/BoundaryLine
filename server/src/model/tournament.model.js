@@ -1,5 +1,5 @@
 import mongoose, { mongo } from "mongoose";
-import { format } from "../constant/format.constant";
+import { FORMAT } from "../constant/format.constant";
 
 const tournamentSchema = mongoose.Schema({
     name: {type: String, required: true, trim: true},
