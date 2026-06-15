@@ -3,23 +3,45 @@ import env from "./config/env.js";
 import morgan from "morgan";
 import securityMiddleware from "./middleware/security.middleware.js";
 import googleOAuthMiddleware from "./middleware/googleOAuth.middleware.js";
+<<<<<<< HEAD
 import authRouter from "./modules/auth/auth.route.js";
 import userRouter from "./modules/user/user.route.js";
 import matchRoute from "./modules/match/match.route.js";
 import teamRoute from "./modules/team/team.route.js";
 import adminRouter from "./modules/admin/admin.routes.js"
 import commentaryRouter from "./modules/commentary/commentary.route.js";
+=======
+import authRouter from "./modules/public/auth/auth.route.js";
+import userRouter from "./modules/private/user/user.route.js";
+import healthRouter from "./modules/public/health/health.route.js";
+import matchRoute from "./modules/private/match/match.route.js";
+import teamRoute from "./modules/private/team/team.route.js";
+import commentaryRouter from "./modules/private/commentary/commentary.route.js";
+import {
+  errorHandler,
+  notFoundHandler,
+} from "./middleware/error.middleware.js";
+>>>>>>> f7e48f3f571d9fab56f8843779705251afb523de
 
 function registerFeatureRoutes(app, prefix) {
   // What: mount the feature routes under one API prefix.
   // Why: frontend clients currently expect `/v1/*`, while backend docs also mention `/api/*`.
   // How: reuse the same route modules for both prefixes so controllers stay single-source.
+<<<<<<< HEAD
   app.use(`{prefix}/users`, userRouter);
   app.use(`{prefix}/auth`, authRouter);
   app.use(`${prefix}/teams`, teamRoute);
   app.use(`${prefix}/matches`, matchRoute);
   app.use(`${prefix}/commentary`, commentaryRouter);
   app.use(`${prefix}/admin`, adminRouter);
+=======
+  app.use(`${prefix}/users`, userRouter);
+  app.use(`${prefix}/auth`, authRouter);
+  app.use(`${prefix}/teams`, teamRoute);
+  app.use(`${prefix}/matches`, matchRoute);
+  app.use(`${prefix}/commentary`, commentaryRouter);
+  app.use('/health', healthRouter);
+>>>>>>> f7e48f3f571d9fab56f8843779705251afb523de
 }
 
 export default function createApp() {
@@ -38,17 +60,8 @@ export default function createApp() {
 
   registerFeatureRoutes(app, "/api");
 
-  /**
-   * @method GET
-   * @route /health
-   * @description to check the status of the server
-   * */
-
-  app.get("/health", (req, res) => {
-    res.json({
-      message: "healthy",
-    });
-  });
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
