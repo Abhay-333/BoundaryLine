@@ -1,49 +1,47 @@
 import { Router } from "express";
+import { validateRequest } from "../../../middleware/validateRequest.js";
 import TournamentController from "./tournament.controller.js";
-
-import { validate } from "../../../shared/middlewares/validate.js";
-
 import {
-    createTournamentSchema,
-    updateTournamentSchema,
-    tournamentIdSchema
-} from "./tournament.validation.js";
+  createTournamentSchema,
+  updateTournamentSchema,
+  tournamentIdSchema,
+} from "../../../validators/tournament.validator.js";
 
-const router = Router();
+class TournamentRoute {
+  constructor(tournamentController = new TournamentController()) {
+    this.router = Router();
+    this.tournamentController = tournamentController;
+    this.registerRoutes();
+  }
 
-const tournamentController =
-    new TournamentController();
+  registerRoutes() {
+    this.router.post(
+      "/",
+      validateRequest(createTournamentSchema),
+      this.tournamentController.createTournament,
+    );
 
-router.get(
-    "/",
-    tournamentController.listTournaments
-);
-
-router.get(
-    "/:id",
-    validate(tournamentIdSchema),
-    tournamentController.getTournament
-);
-
-router.post(
-    "/",
-    validate(createTournamentSchema),
-    tournamentController.createTournament
-);
-
-router.patch(
-    "/:id",
-    validate({
+    this.router.patch(
+      "/:id",
+      validateRequest({
         ...tournamentIdSchema,
-        ...updateTournamentSchema
-    }),
-    tournamentController.updateTournament
-);
+        ...updateTournamentSchema,
+      }),
+      this.tournamentController.updateTournament,
+    );
 
-router.delete(
-    "/:id",
-    validate(tournamentIdSchema),
-    tournamentController.deleteTournament
-);
+    this.router.delete(
+      "/:id",
+      validateRequest(tournamentIdSchema),
+      this.tournamentController.deleteTournament,
+    );
+  }
 
-export default router;
+  getRouter() {
+    return this.router;
+  }
+}
+
+const tournamentRoute = new TournamentRoute();
+
+export default tournamentRoute.getRouter();
