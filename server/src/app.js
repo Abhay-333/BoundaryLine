@@ -4,9 +4,11 @@ import morgan from "morgan";
 import securityMiddleware from "./middleware/security.middleware.js";
 import googleOAuthMiddleware from "./middleware/googleOAuth.middleware.js";
 import authRouter from "./modules/public/auth/auth.route.js";
+import publicPlayerRoute from "./modules/public/player/player.route.js";
 import userRouter from "./modules/private/user/user.route.js";
 import healthRouter from "./modules/public/health/health.route.js";
 import matchRoute from "./modules/private/match/match.route.js";
+import privatePlayerRoute from "./modules/private/player/player.route.js";
 import teamRoute from "./modules/private/team/team.route.js";
 import seriesRoute from "./modules/private/series/series.route.js";
 import tournamentRoute from "./modules/private/tournament/tournament.route.js";
@@ -22,6 +24,8 @@ function registerFeatureRoutes(app, prefix) {
   // How: reuse the same route modules for both prefixes so controllers stay single-source.
   app.use(`${prefix}/users`, userRouter);
   app.use(`${prefix}/auth`, authRouter);
+  app.use(`${prefix}/players`, publicPlayerRoute);
+  app.use(`${prefix}/private/players`, privatePlayerRoute);
   app.use(`${prefix}/teams`, teamRoute);
   app.use(`${prefix}/matches`, matchRoute);
   app.use(`${prefix}/series`, seriesRoute);
