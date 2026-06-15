@@ -1,56 +1,60 @@
 import { Router } from "express";
-
-import SquadController from "../../admin/squad/squad.controller.js";
-
-import { validate } from "../../../shared/middlewares/validate.js";
-
+import { validateRequest } from "../../../middleware/validateRequest.js";
+import SquadController from "./squad.controller.js";
 import {
   authMiddleware,
   authorizationMiddleware,
-} from "../../../middlewares/auth.middleware.js";
-
-import { ROLES } from "../../../constant/roles.constant.js";
-
+} from "../../../middleware/auth.middleware.js";
+import { ROLES } from "../../../constant/role.constant.js";
 import {
   createSquadSchema,
   updateSquadSchema,
   squadIdSchema,
-} from "../../admin/squad/squad.validation.js";
+} from "../../../validators/squad.validator.js";
 
-const router = Router();
+class SquadRoute {
+  constructor(squadController = new SquadController()) {
+    this.router = Router();
+    this.squadController = squadController;
+    this.registerRoutes();
+  }
 
-const squadController = new SquadController();
+  registerRoutes() {
+    const ADMIN_ROLES = [ROLES.ADMIN, ROLES.SUPER_ADMIN];
 
-const ADMIN_ROLES = [
-  ROLES.ADMIN,
-  ROLES.SUPER_ADMIN,
-];
+    this.router.post(
+      "/",
+      authMiddleware,
+      authorizationMiddleware(ADMIN_ROLES),
+      validateRequest(createSquadSchema),
+      this.squadController.createSquad,
+    );
 
-router.post(
-  "/",
-  authMiddleware,
-  authorizationMiddleware(ADMIN_ROLES),
-  validate(createSquadSchema),
-  squadController.createSquad
-);
+    this.router.patch(
+      "/:id",
+      authMiddleware,
+      authorizationMiddleware(ADMIN_ROLES),
+      validateRequest({
+        ...squadIdSchema,
+        ...updateSquadSchema,
+      }),
+      this.squadController.updateSquad,
+    );
 
-router.patch(
-  "/:id",
-  authMiddleware,
-  authorizationMiddleware(ADMIN_ROLES),
-  validate({
-    ...squadIdSchema,
-    ...updateSquadSchema,
-  }),
-  squadController.updateSquad
-);
+    this.router.delete(
+      "/:id",
+      authMiddleware,
+      authorizationMiddleware(ADMIN_ROLES),
+      validateRequest(squadIdSchema),
+      this.squadController.deleteSquad,
+    );
+  }
 
-router.delete(
-  "/:id",
-  authMiddleware,
-  authorizationMiddleware(ADMIN_ROLES),
-  validate(squadIdSchema),
-  squadController.deleteSquad
-);
+  getRouter() {
+    return this.router;
+  }
+}
 
-export default router;
+const squadRoute = new SquadRoute();
+
+export default squadRoute.getRouter();

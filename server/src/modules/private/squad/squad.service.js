@@ -6,10 +6,14 @@ import NotFound from "../../../shared/error/NotFound.js";
 import Conflict from "../../../shared/error/Conflict.js";
 
 class SquadService {
-  constructor() {
-    this.squadRepository = SquadRepository;
-    this.teamRepository = TeamRepository;
-    this.seriesRepository = SeriesRepository;
+  constructor(
+    squadRepository = new SquadRepository(),
+    teamRepository = new TeamRepository(),
+    seriesRepository = new SeriesRepository(),
+  ) {
+    this.squadRepository = squadRepository;
+    this.teamRepository = teamRepository;
+    this.seriesRepository = seriesRepository;
   }
 
   async getSquads() {
@@ -29,63 +33,46 @@ class SquadService {
   async createSquad(payload) {
     const { seriesId, teamId } = payload;
 
-    const series =
-      await this.seriesRepository.findById(seriesId);
+    const series = await this.seriesRepository.findById(seriesId);
 
     if (!series) {
       throw new NotFound("Series not found");
     }
 
-    const team =
-      await this.teamRepository.findById(teamId);
+    const team = await this.teamRepository.findById(teamId);
 
     if (!team) {
       throw new NotFound("Team not found");
     }
 
-    const existingSquad =
-      await this.squadRepository.findBySeriesAndTeam(
-        seriesId,
-        teamId
-      );
+    const existingSquad = await this.squadRepository.findBySeriesAndTeam(
+      seriesId,
+      teamId,
+    );
 
     if (existingSquad) {
-      throw new Conflict(
-        "Squad already exists for this team in this series"
-      );
+      throw new Conflict("Squad already exists for this team in this series");
     }
 
     return this.squadRepository.create(payload);
   }
 
   async updateSquad(squadId, payload) {
-    const currentSquad =
-      await this.squadRepository.findById(squadId);
+    await this.getSquadById(squadId);
 
-    if (!currentSquad) {
+    const updatedSquad = await this.squadRepository.updateById(squadId, payload);
+
+    if (!updatedSquad) {
       throw new NotFound("Squad not found");
     }
-
-    const updatedSquad =
-      await this.squadRepository.updateById(
-        squadId,
-        payload
-      );
 
     return updatedSquad;
   }
 
   async deleteSquad(squadId) {
-    const currentSquad =
-      await this.squadRepository.findById(squadId);
+    await this.getSquadById(squadId);
 
-    if (!currentSquad) {
-      throw new NotFound("Squad not found");
-    }
-
-    return this.squadRepository.softDeleteById(
-      squadId
-    );
+    return this.squadRepository.softDeleteById(squadId);
   }
 }
 
