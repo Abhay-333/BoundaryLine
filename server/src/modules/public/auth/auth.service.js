@@ -24,7 +24,7 @@ export default class AuthService {
 
     const data = {
       _id: result._id,
-      email: user.emails[0].value,   
+      email: user.emails[0].value,
       name: user.displayName,
       picture: user.photos[0].value,
       role: result.role,
