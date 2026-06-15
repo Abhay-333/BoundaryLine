@@ -1,5 +1,5 @@
-import { asyncHandler } from "../../shared/utils/asyncHandler.js";
-import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { asyncHandler } from "../../../shared/utils/asyncHandler.js";
+import ApiResponse from "../../../shared/utils/ApiResponse.js";
 import MatchService from "./match.service.js";
 
 class MatchController {

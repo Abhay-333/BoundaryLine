@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import ApiResponse from "../../shared/utils/ApiResponse.js";
+import ApiResponse from "../../../shared/utils/ApiResponse.js";
 
   /**
    * @method GET

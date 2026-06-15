@@ -1,6 +1,6 @@
-import Conflict from "../../shared/error/Conflict.js";
-import NotFound from "../../shared/error/NotFound.js";
-import TeamRepository from "../../repository/team.repository.js";
+import Conflict from "../../../shared/error/Conflict.js";
+import NotFound from "../../../shared/error/NotFound.js";
+import TeamRepository from "../../../repository/team.repository.js";
 
 class TeamService {
   constructor(teamRepository = new TeamRepository()) {

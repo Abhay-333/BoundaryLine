@@ -1,4 +1,4 @@
-import UserRepo from "../../repository/user.repository.js";
+import UserRepo from "../../../repository/user.repository.js";
 // overall logic of users
 export default class UserService {
   constructor() {

@@ -1,6 +1,6 @@
 import commentaryService from "./commentary.service.js";
-import { asyncHandler } from "../../shared/utils/asyncHandler.js";
-import ApiResponse from "../../shared/utils/ApiResponse.js";
+import { asyncHandler } from "../../../shared/utils/asyncHandler.js";
+import ApiResponse from "../../../shared/utils/ApiResponse.js";
 
 export default class CommentaryController {
   constructor() {

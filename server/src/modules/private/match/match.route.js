@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { validateRequest } from "../../middleware/validateRequest.js";
+import { validateRequest } from "../../../middleware/validateRequest.js";
 import MatchController from "./match.controller.js";
 import {
   createMatchSchema,
   matchIdParamSchema,
   updateMatchSchema,
-} from "../../validators/match.validator.js";
+} from "../../../validators/match.validator.js";
 
 class MatchRoute {
   constructor(matchController = new MatchController()) {

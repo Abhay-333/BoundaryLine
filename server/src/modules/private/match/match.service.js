@@ -1,6 +1,6 @@
-import BadRequest from "../../shared/error/BadRequest.js";
-import NotFound from "../../shared/error/NotFound.js";
-import MatchRepository from "../../repository/match.repository.js";
+import BadRequest from "../../../shared/error/BadRequest.js";
+import NotFound from "../../../shared/error/NotFound.js";
+import MatchRepository from "../../../repository/match.repository.js";
 
 class MatchService {
   constructor(matchRepository = new MatchRepository()) {

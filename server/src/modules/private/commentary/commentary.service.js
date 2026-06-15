@@ -1,9 +1,9 @@
-import CommentaryRepository from "../../repository/commentary.respository.js"
-import Match from "../../model/match.model.js";
-import BadRequest from "../../shared/error/BadRequest.js";
-import NotFound from "../../shared/error/NotFound.js";
-import { logger } from "../../shared/utils/logger.js";
-import { emitToMatch } from "../../shared/socket/emitToMatch.js";
+import CommentaryRepository from "../../../repository/commentary.respository.js"
+import Match from "../../../model/match.model.js";
+import BadRequest from "../../../shared/error/BadRequest.js";
+import NotFound from "../../../shared/error/NotFound.js";
+import { logger } from "../../../shared/utils/logger.js";
+import { emitToMatch } from "../../../shared/socket/emitToMatch.js";
 
 class CommentaryService {
   constructor() {

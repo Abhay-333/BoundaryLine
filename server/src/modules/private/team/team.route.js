@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { validateRequest } from "../../middleware/validateRequest.js";
+import { validateRequest } from "../../../middleware/validateRequest.js";
 import TeamController from "./team.controller.js";
 import {
   createTeamSchema,
   teamIdParamSchema,
   updateTeamSchema,
-} from "../../validators/team.validator.js";
+} from "../../../validators/team.validator.js";
 
 class TeamRoute {
   constructor(teamController = new TeamController()) {
@@ -22,10 +22,26 @@ class TeamRoute {
     // Why: route files should own URL shape, middleware order, and controller binding.
     // How: validate inputs first, then call class-based controller handlers.
     this.router.get("/", this.teamController.listTeams);
-    this.router.get("/:id", validateRequest(teamIdParamSchema), this.teamController.getTeam);
-    this.router.post("/", validateRequest(createTeamSchema), this.teamController.createTeam);
-    this.router.patch("/:id", validateRequest(updateTeamSchema), this.teamController.updateTeam);
-    this.router.delete("/:id", validateRequest(teamIdParamSchema), this.teamController.deleteTeam);
+    this.router.get(
+      "/:id",
+      validateRequest(teamIdParamSchema),
+      this.teamController.getTeam,
+    );
+    this.router.post(
+      "/",
+      validateRequest(createTeamSchema),
+      this.teamController.createTeam,
+    );
+    this.router.patch(
+      "/:id",
+      validateRequest(updateTeamSchema),
+      this.teamController.updateTeam,
+    );
+    this.router.delete(
+      "/:id",
+      validateRequest(teamIdParamSchema),
+      this.teamController.deleteTeam,
+    );
   }
 
   getRouter() {
