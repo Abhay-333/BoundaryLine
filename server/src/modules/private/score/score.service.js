@@ -1,6 +1,7 @@
-import ScoreRepository from "./score.repository.js";
-import { Match } from "../shared/models/reference.model.js";
-import { BadRequestError, NotFoundError } from "../../shared/errors/index.js";
+import ScoreRepository from "../../repository/score.repository.js";
+import { Match } from "../../shared/models/reference.model.js";
+import BadRequest from "../../shared/errors/BadRequest.js";
+import NotFound from "../../shared/errors/NotFound.js";
 import { emitToMatch } from "../../shared/socket/emitToMatch.js";
 import { logger } from "../../config/logger.js";
 
@@ -16,13 +17,13 @@ class ScoreService {
     });
 
     if (!match) {
-      throw new NotFoundError("Match not found or deleted");
+      throw new NotFound("Match not found or deleted");
     }
 
     const allowedStatuses = ["LIVE", "INNINGS_BREAK"];
 
     if (!allowedStatuses.includes(match.status)) {
-      throw new BadRequestError(
+      throw new BadRequest(
         `Match is not active (current status: ${match.status})`,
       );
     }
@@ -31,7 +32,12 @@ class ScoreService {
   }
 
   async createScore(scoreData, userId) {
-    logger.info({ matchId: scoreData.matchId }, "Creating score");
+    logger.info(
+      {
+        matchId: scoreData.matchId,
+      },
+      "Creating score",
+    );
 
     await this.ensureLiveMatch(scoreData.matchId);
 
@@ -52,7 +58,7 @@ class ScoreService {
     const score = await this.scoreRepository.findById(scoreId);
 
     if (!score) {
-      throw new NotFoundError("Score not found");
+      throw new NotFound("Score not found");
     }
 
     await this.ensureLiveMatch(score.matchId);
@@ -67,6 +73,11 @@ class ScoreService {
       payload,
     );
 
+    // Concurrent soft-delete safety
+    if (!updatedScore) {
+      throw new NotFound("Score not found or deleted");
+    }
+
     emitToMatch(updatedScore.matchId.toString(), "score.updated", updatedScore);
 
     return updatedScore;
@@ -80,7 +91,7 @@ class ScoreService {
     const score = await this.scoreRepository.findById(scoreId);
 
     if (!score) {
-      throw new NotFoundError("Score not found");
+      throw new NotFound("Score not found");
     }
 
     return this.scoreRepository.softDelete(scoreId);
