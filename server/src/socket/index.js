@@ -17,10 +17,11 @@ export const initializeSocket = (server) => {
     );
 
     socket.on("join-match", (matchId) => {
-      socket.join(matchId);
+      const room = `match:${matchId}`;
+      socket.join(room);
 
       console.log(
-        `${socket.id} joined ${matchId}`
+        `${socket.id} joined room: ${room}`
       );
     });
 

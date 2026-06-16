@@ -4,6 +4,7 @@ import BadRequest from "../../../shared/error/BadRequest.js";
 import NotFound from "../../../shared/error/NotFound.js";
 import { emitToMatch } from "../../../shared/socket/emitToMatch.js";
 import { logger } from "../../../shared/utils/logger.js";
+import { SOCKET_EVENTS } from "../../../constant/socket-events.constant.js";
 
 class ScoreService {
   constructor(scoreRepository = new ScoreRepository()) {
@@ -49,7 +50,16 @@ class ScoreService {
 
     const score = await this.scoreRepository.create(payload);
 
-    emitToMatch(score.matchId.toString(), "score.created", score);
+    emitToMatch(score.matchId.toString(), SOCKET_EVENTS.SCORE_CREATED, score);
+
+    logger.info(
+      {
+        event: SOCKET_EVENTS.SCORE_CREATED,
+        matchId: score.matchId,
+        scoreId: score._id,
+      },
+      "Socket event emitted"
+    );
 
     return score;
   }
@@ -78,7 +88,33 @@ class ScoreService {
       throw new NotFound("Score not found or deleted");
     }
 
-    emitToMatch(updatedScore.matchId.toString(), "score.updated", updatedScore);
+    emitToMatch(updatedScore.matchId.toString(), SOCKET_EVENTS.SCORE_UPDATED, updatedScore);
+
+    logger.info(
+      {
+        event: SOCKET_EVENTS.SCORE_UPDATED,
+        matchId: updatedScore.matchId,
+        scoreId: updatedScore._id,
+      },
+      "Socket event emitted"
+    );
+
+    // Over Completed detection
+    if (updatedScore.overs && updatedScore.overs.endsWith(".0") && updatedScore.overs !== "0.0") {
+        const overNumber = parseInt(updatedScore.overs.split(".")[0]);
+        emitToMatch(updatedScore.matchId.toString(), SOCKET_EVENTS.OVER_COMPLETED, {
+            matchId: updatedScore.matchId,
+            overNumber
+        });
+        logger.info(
+            {
+                event: SOCKET_EVENTS.OVER_COMPLETED,
+                matchId: updatedScore.matchId,
+                overNumber
+            },
+            "Socket event emitted"
+        );
+    }
 
     return updatedScore;
   }
@@ -101,12 +137,23 @@ class ScoreService {
         scoreId
       );
 
+    const payload = {
+      scoreId: score._id
+    };
+
     emitToMatch(
       score.matchId.toString(),
-      "score.deleted",
+      SOCKET_EVENTS.SCORE_DELETED,
+      payload
+    );
+
+    logger.info(
       {
-        scoreId: score._id
-      }
+        event: SOCKET_EVENTS.SCORE_DELETED,
+        matchId: score.matchId,
+        scoreId: score._id,
+      },
+      "Socket event emitted"
     );
 
     return deletedScore;
