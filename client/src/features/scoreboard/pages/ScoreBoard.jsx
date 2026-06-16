@@ -109,16 +109,18 @@ export const ScoreboardPage = () => {
   // innings=1 is first batting, innings=2 is second batting
   const innings1 = useMemo(() => scores.find((s) => s.innings === 1), [scores]);
   const innings2 = useMemo(() => scores.find((s) => s.innings === 2), [scores]);
-  const latestScore = useMemo(() => {
-    if (!scores.length) return null;
+const latestScore = useMemo(() => {
+  if (!scores.length) return null;
 
-    return [...scores].sort((a, b) => {
-      const [ao, ab] = (a.overs || "0.0").split(".").map(Number);
-      const [bo, bb] = (b.overs || "0.0").split(".").map(Number);
+  // Use timestamps (updatedAt or createdAt) to find the most recently updated score,
+  // instead of sorting by overs which is wrong across multiple innings.
+  return scores.reduce((latest, current) => {
+    const latestTime = new Date(latest.updatedAt || latest.createdAt).getTime();
+    const currentTime = new Date(current.updatedAt || current.createdAt).getTime();
 
-      return (bo * 6 + bb) - (ao * 6 + ab);
-    })[0];
-  }, [scores]);
+    return currentTime > latestTime ? current : latest;
+  });
+}, [scores]);
 
   // Determine which innings is currently active
   const activeInnings = useMemo(() => {
@@ -135,6 +137,14 @@ export const ScoreboardPage = () => {
       target: latestScore.target || undefined,
     };
   }, [latestScore]);
+
+  // ─── Debug: log raw scores to verify data from backend ───
+  useEffect(() => {
+    console.log("scores", scores);
+    console.log("innings1", innings1);
+    console.log("latestScore", latestScore);
+    console.log("activeInnings", activeInnings);
+  }, [scores, innings1, latestScore, activeInnings]);
 
   // ─── Compute derived stats ───
   const totalOversPlayed = (activeInnings?.overs || 0) + (activeInnings?.balls || 0) / 6;
