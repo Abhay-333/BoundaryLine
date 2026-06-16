@@ -15,9 +15,11 @@ router.get(
   }),
 );
 
-// for development not for production
 router.patch(
   "/make-admin",
+  authenticateRequest,
+  authorizeRoles([ROLES.SUPER_ADMIN]),
+  validateRequest(makeAdminSchema),
   asyncHandler(authController.makeAdmin.bind(authController)),
 );
 
@@ -39,6 +41,7 @@ router.get("/me", authMiddleware, asyncHandler(authController))
 
 router.post(
   "/register",
+  validateRequest(registerSchema),
   asyncHandler(authController.registerController.bind(authController)),
 );
 

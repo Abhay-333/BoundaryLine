@@ -1,8 +1,6 @@
 import { app_config } from "../../../constant/app.constant.js";
 import AuthService from "./auth.service.js";
-import AppError from "../../../shared/error/AppError.js";
 import { StatusCodes } from "http-status-codes";
-import bcrypt from "bcrypt";
 import env from "../../../config/env.js";
 import buildSuccessResponse from "../../../shared/successResponse/buildSuccessResponse.js";
 
@@ -12,11 +10,12 @@ export default class AuthController {
   }
 
   async makeAdmin(req, res) {
-    await this.userService.makeAdmin("om@example.com");
+    const user = await this.userService.makeAdmin(req.validated.body.email);
 
-    res.json({
+    return res.status(StatusCodes.OK).json({
       success: true,
       message: "User promoted to ADMIN",
+      data: user,
     });
   }
 
@@ -37,46 +36,53 @@ export default class AuthController {
       req.user,
     );
 
-    res.cookie("accessToken", accessToken, app_config().cookie.accessToken);
-    res.cookie("refreshToken", refreshToken, app_config().cookie.refreshToken);
+    setAuthCookies(res, accessToken, refreshToken);
 
     res.redirect(env.REDIRECT_URL);
   }
 
   async registerController(req, res) {
-    const userData = req.body;
-
-    // add this in auth.validator
-    // if (!userData)
-    //   throw new AppError("Request body is required.", StatusCodes.BAD_REQUEST);
-
-    const { accessToken, refreshToken } =
+    const userData = req.validated.body;
+    const { accessToken, refreshToken, user } =
       await this.userService.registerService(userData);
 
-    res.cookie("accessToken", accessToken, app_config().cookie.accessToken);
-    res.cookie("refreshToken", refreshToken, app_config().cookie.refreshToken);
+    setAuthCookies(res, accessToken, refreshToken);
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
       message: "User registered successfully",
+      data: user,
     });
   }
 
   async loginController(req, res) {
-    const userData = req.body;
-    if (!userData)
-      throw new AppError("Request body is required.", StatusCodes.BAD_REQUEST);
-
+    const userData = req.validated.body;
     const { accessToken, refreshToken, user } =
       await this.userService.loginService(userData);
 
-    res.cookie("accessToken", accessToken, app_config().cookie.accessToken);
-    res.cookie("refreshToken", refreshToken, app_config().cookie.refreshToken);
+    setAuthCookies(res, accessToken, refreshToken);
 
     return res.status(StatusCodes.OK).json({
       success: true,
       message: "User LoggedIn Successfully",
       data: user,
+    });
+  }
+
+  async meController(req, res) {
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Authenticated user fetched successfully",
+      data: req.user,
+    });
+  }
+
+  async logoutController(_req, res) {
+    clearAuthCookies(res);
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "User logged out successfully",
     });
   }
 }

@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router'
+import { useRef } from "react";
 import {
   Zap,
   ChevronLeft,
@@ -84,7 +83,7 @@ function Badge({ color = "secondary", children }) {
 }
 
 /** Live score card used in the carousel */
-function LiveMatchCard({ type, accentVariant, label, team1, team2, status }) {
+function LiveMatchCard({ accentVariant, label, team1, team2, status }) {
   return (
     <GlassCard
       accentVariant={accentVariant}
@@ -358,14 +357,6 @@ export default function BoundaryLine() {
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
-
-
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
 
   // Carousel drag-to-scroll

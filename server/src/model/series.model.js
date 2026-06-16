@@ -51,4 +51,4 @@ seriesSchema.path("teams").validate(
     "Series must have atleast 2 teams"
 )
 
-export const SeriesModel = mongoose.model("Series", seriesSchema);
+export const SeriesModel = mongoose.models.Series || mongoose.model("Series", seriesSchema);
