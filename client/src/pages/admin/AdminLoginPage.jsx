@@ -1,7 +1,16 @@
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 import { BrandPanel } from "../../features/auth/admin/components/BrandPanel";
 import AdminLoginForm from "../../features/auth/admin/components/AdminLoginForm";
+import { UserRole } from "../../features/scorer-console/pages/type.js";
 
 export const AdminLoginPage = () => {
+  const role = useSelector((state) => state.auth.role);
+
+  if (role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN) {
+    return <Navigate to="/admin" replace />;
+  }
+
   return (
     <main className="min-h-screen bg-[#0d1012] text-[#eef2ef]">
       <section className="mx-auto flex min-h-screen w-full max-w-[1180px] items-center justify-center px-4 py-6 sm:px-6 lg:px-8">

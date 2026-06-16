@@ -7,6 +7,7 @@ import { checkPermissions } from "./permissions.js";
 export const RoleGuard = ({ children, allowedRoles, fallback }) => {
   const currentRole = useSelector((state) => state.auth.role);
   const hasAccess = checkPermissions(currentRole, allowedRoles);
+  const visibleRole = currentRole ?? "GUEST";
 
   if (!hasAccess) {
     if (fallback) return <>{fallback}</>;
@@ -20,7 +21,7 @@ export const RoleGuard = ({ children, allowedRoles, fallback }) => {
         </div>
         <h2 className="text-2xl font-bold font-display text-white">Access Violation</h2>
         <p className="text-gray-400 font-sans max-w-sm">
-          Your current security clearance level (<span className="text-brand-green font-semibold">{currentRole}</span>) is insufficient to access this action console.
+          Your current security clearance level (<span className="text-brand-green font-semibold">{visibleRole}</span>) is insufficient to access this action console.
         </p>
       </div>
     );
