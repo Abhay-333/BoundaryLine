@@ -14,7 +14,7 @@ export const clearAdminSession = () => {
 };
 
 export const loginAdmin = async ({ email, password }) => {
-  const response = await apiClient.post("/public/auth/login", { email, password });
+  const response = await apiClient.post("/auth/login", { email, password });
   const user = response.data?.data;
 
   if (!user) {
@@ -22,7 +22,7 @@ export const loginAdmin = async ({ email, password }) => {
   }
 
   if (!ADMIN_ROLES.includes(user.role)) {
-    await apiClient.post("/public/auth/logout").catch(() => {});
+    await apiClient.post("/auth/logout").catch(() => {});
     clearAdminSession();
     throw new Error("This account does not have admin access.");
   }
@@ -41,7 +41,7 @@ export const persistAdminSession = ({ user, remember }) => {
 
 export const logoutAdmin = async () => {
   try {
-    await apiClient.post("/public/auth/logout");
+    await apiClient.post("/auth/logout");
   } catch {
     // Local logout should still complete if the API is temporarily unavailable.
   } finally {
@@ -51,5 +51,5 @@ export const logoutAdmin = async () => {
 
 export const getGoogleAuthUrl = () => {
   window.sessionStorage.setItem(ADMIN_SESSION_RESTORE_KEY, "1");
-  return `${apiClient.defaults.baseURL}/public/auth/google`;
+  return `${apiClient.defaults.baseURL}/auth/google`;
 };

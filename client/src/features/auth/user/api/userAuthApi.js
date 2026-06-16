@@ -14,7 +14,7 @@ export const clearUserSession = () => {
  * POST /auth/login
  */
 export const loginUser = async ({ email, password }) => {
-  const response = await apiClient.post("`/auth/login", { email, password });
+  const response = await apiClient.post("/auth/login", { email, password });
   const user = response.data?.data;
 
   if (!user) {
@@ -30,7 +30,7 @@ export const loginUser = async ({ email, password }) => {
  * Backend expects: { name, email, password }
  */
 export const registerUser = async ({ name, email, password }) => {
-  const response = await apiClient.post("/public/auth/register", {
+  const response = await apiClient.post("/auth/register", {
     name,
     email,
     password,
