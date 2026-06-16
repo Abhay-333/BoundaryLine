@@ -1,9 +1,32 @@
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Sparkles, MessageSquare, Plus, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-export const LiveCommentary = () => {
-  const currentMatch = useSelector((state) => state.match.currentMatch);
+/**
+ * LiveCommentary — shows ball-by-ball commentary feed.
+ * Accepts an optional `externalCommentary` prop from backend.
+ * Falls back to Redux state if no external data is provided.
+ */
+export const LiveCommentary = ({ externalCommentary }) => {
+  const reduxMatch = useSelector((state) => state.match.currentMatch);
+
+  // Choose data source: external (backend) > Redux
+  const commentaryData = useMemo(() => {
+    if (externalCommentary && externalCommentary.length > 0) {
+      // Map backend commentary format to Redux-compatible display format
+      return externalCommentary.map((c) => ({
+        id: c._id || c.id,
+        over: `${c.over}.${c.ball || 0}`,
+        type: c.type === "WICKET" ? "WICKET" : c.type === "SIX" || c.type === "FOUR" ? "BOUNDARY" : c.type === "MILESTONE" ? "MILESTONE" : "NORMAL",
+        title: c.type === "WICKET" ? "WICKET!" : c.runsScored === 6 ? "SIX!" : c.runsScored === 4 ? "FOUR!" : c.text?.split(":")[0] || "Ball",
+        description: c.text || "",
+        timestamp: c.createdAt || c.timestamp,
+      }));
+    }
+    // Fallback to Redux
+    return reduxMatch?.commentary || [];
+  }, [externalCommentary, reduxMatch]);
   // Helper styles for commentary categories
   const getCategoryTheme = (type) => {
     switch (type) {
@@ -50,7 +73,7 @@ export const LiveCommentary = () => {
 
       <div className="relative border-l border-zinc-800 pl-6 ml-3 flex flex-col gap-6 font-sans">
         <AnimatePresence initial={false}>
-          {currentMatch.commentary.map((item) => {
+          {commentaryData.map((item) => {
             const theme = getCategoryTheme(item.type);
             return (
               <motion.div
