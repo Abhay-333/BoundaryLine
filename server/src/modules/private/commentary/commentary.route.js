@@ -1,28 +1,68 @@
+import { Router } from "express";
 import CommentaryController from "./commentary.controller.js";
-import express from "express";
 
-const router = express.Router();
+import { validateRequest } from "../../../middleware/validateRequest.js";
 
-const commentaryController = new CommentaryController();
+import {
+  authenticate,
+  authorize,
+} from "../../../middleware/auth.middleware.js";
 
-// Controller object
+import {
+  createCommentarySchema,
+  commentaryIdParamSchema,
+  getCommentaryByMatchSchema,
+} from "../../../validators/commentary.validator.js";
 
-/**
- * POST /api/commentary
- * New commentary create karega
- */
-router.post("/", commentaryController.addCommentary);
+class CommentaryRoute {
+  constructor(commentaryController = new CommentaryController()) {
+    this.router = Router();
+    this.commentaryController = commentaryController;
+    this.registerRoutes();
+  }
 
-/**
- * DELETE /api/commentary/:id
- * Commentary delete karega
- */
-router.delete("/:id", commentaryController.deleteCommentary);
+  registerRoutes() {
+    /**
+     * POST /api/commentary
+     * Create commentary
+     */
+    this.router.post(
+      "/",
+      authenticate,
+      authorize("SUPER_ADMIN", "ADMIN", "SCORER"),
+      validateRequest(createCommentarySchema),
+      this.commentaryController.addCommentary
+    );
 
-/**
- * GET /api/commentary/match/:matchId
- * Match ki commentary fetch karega
- */
-router.get("/match/:matchId", commentaryController.getCommentaryByMatch);
+    /**
+     * GET /api/commentary/match/:matchId
+     * Get commentary by match
+     */
+    this.router.get(
+      "/match/:matchId",
+      authenticate,
+      validateRequest(getCommentaryByMatchSchema),
+      this.commentaryController.getCommentaryByMatch
+    );
 
-export default router;
+    /**
+     * DELETE /api/commentary/:id
+     * Delete commentary
+     */
+    this.router.delete(
+      "/:id",
+      authenticate,
+      authorize("SUPER_ADMIN", "ADMIN"),
+      validateRequest(commentaryIdParamSchema),
+      this.commentaryController.deleteCommentary
+    );
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
+
+const commentaryRoute = new CommentaryRoute();
+
+export default commentaryRoute.getRouter();

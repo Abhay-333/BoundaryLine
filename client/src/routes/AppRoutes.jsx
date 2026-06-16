@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
-import CricPulse from "../features/landing page/pages/LandingPage.jsx";
+import LandingPage from "../features/landing page/pages/LandingPage.jsx";
 import FixturesPage from "../features/fixtures/pages/FixturesPage.jsx";
 import ScoreboardPage from "../features/scoreboard/pages/ScoreBoard.jsx";
 import ScorerConsolePage from "../features/scorer-console/pages/ScorerConsolePage.jsx";
@@ -13,6 +13,9 @@ import UserRegisterForm from "../features/auth/user/component/UserRegisterForm.j
 import UserLoginForm from "../features/auth/user/component/UserLoginForm.jsx";
 import AdminRegisterForm from "../features/auth/admin/components/AdminRegisterForm.jsx";
 import AdminLoginForm from "../features/auth/admin/components/AdminLoginForm.jsx";
+import NewsPage from "../features/news/pages/NewsPage.jsx";
+import TeamPage from "../feature/all-team/page/TeamPage.jsx";
+import RankingPage from "../features/ranking/pages/RankingPage.jsx";
 
 const ComingSoonPage = ({ title, description }) => {
   return (
@@ -39,7 +42,7 @@ const ProtectedScorerRoute = ({ children }) => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <CricPulse />,
+    element: <LandingPage />,
   },
   {
     path: "/matches",
@@ -110,12 +113,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/teams",
-    element: (
-      <ComingSoonPage
-        title="Teams"
-        description="Team profiles, squads, rankings, forms, and recent fixtures will connect here."
-      />
-    ),
+    element: <TeamPage />,
   },
   {
     path: "/players",
@@ -129,11 +127,12 @@ const router = createBrowserRouter([
   {
     path: "/news",
     element: (
-      <ComingSoonPage
-        title="Cricket News"
-        description="Match stories, tournament coverage, previews, analysis, and updates will connect here."
-      />
+      <NewsPage />
     ),
+  },
+  {
+    path: "/ranking",
+    element: <RankingPage />
   },
   {
     path: "*",
