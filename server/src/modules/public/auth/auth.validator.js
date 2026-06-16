@@ -1,26 +1,29 @@
 import { z } from "zod";
-import {ROLES} from "../../../constant/role.constant.js"
+import { ROLES } from "../../../constant/role.constant.js";
 
-export const loginSchema = z.object({
+export const loginSchema = {
   body: z.object({
-    email: z.string().trim().email("A valid email is required"),
-    password: z.string().min(1, "Password is required"),
+    email: z.string().trim().email(),
+    password: z.string().min(1),
   }),
-});
+};
 
-export const registerSchema = z.object({
+export const registerSchema = {
   body: z.object({
-    name: z.string().trim().min(2, "Name must be at least 2 characters"),
-    email: z.string().trim().email("A valid email is required"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    name: z.string().trim().min(2),
+    email: z.string().trim().email(),
+    password: z.string().min(6),
     picture: z.string().trim().url().optional(),
   }),
-});
+};
 
-export const makeAdminSchema = z.object({
+export const makeAdminSchema = {
   body: z.object({
-    email: z.string().trim().email("A valid email is required"),
-
-    role: z.enum([ROLES.ADMIN, ROLES.SUPER_ADMIN, ROLES.SCORER]),
+    email: z.string().trim().email(),
+    role: z.enum([
+      ROLES.ADMIN,
+      ROLES.SUPER_ADMIN,
+      ROLES.SCORER,
+    ]),
   }),
-});
+};

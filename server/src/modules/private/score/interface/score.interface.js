@@ -6,7 +6,7 @@ export const ScoreFields = {
   matchId: "ObjectId",
   innings: "Number",
   battingTeam: "ObjectId",
-  score: "Number",
+  score: "String",
   wickets: "Number",
   overs: "String",
   runRate: "Number",

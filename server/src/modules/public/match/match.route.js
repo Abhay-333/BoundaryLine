@@ -18,7 +18,11 @@ class PublicMatchRoute {
     // Why: route files should own URL shape, middleware order, and controller binding.
     // How: validate request input before calling class-based controller handlers.
     this.router.get("/", this.matchController.listMatches);
-    this.router.get("/:id", validateRequest(matchIdParamSchema), this.matchController.getMatch);
+    this.router.get(
+      "/:id",
+      validateRequest(matchIdParamSchema),
+      this.matchController.getMatch
+    );  
   }
 
   getRouter() {
