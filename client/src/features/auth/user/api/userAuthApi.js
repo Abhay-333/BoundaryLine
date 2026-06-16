@@ -14,7 +14,7 @@ export const clearUserSession = () => {
  * POST /auth/login
  */
 export const loginUser = async ({ email, password }) => {
-  const response = await apiClient.post("/public/auth/login", { email, password });
+  const response = await apiClient.post("`/auth/login", { email, password });
   const user = response.data?.data;
 
   if (!user) {
