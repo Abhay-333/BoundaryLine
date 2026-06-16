@@ -41,7 +41,7 @@ export default class AuthService {
     // Why: role changes must be explicit and auditable through a protected endpoint.
     // How: update by email and return a safe profile payload.
     const promotedUser = await this.userRepo.findOneAndUpdate(
-      { email },
+      { email: email.toLowerCase() },
       { role: ROLES.ADMIN },
     );
 
@@ -53,26 +53,49 @@ export default class AuthService {
   }
 
   async createOrFindUser(payload) {
-    // What: reuse an existing account by email or create it.
-    // Why: Google OAuth callbacks should be idempotent.
-    // How: check email first, then insert the normalized payload.
-    const existingUser = await this.userRepo.findByEmail(payload.email);
+    // What: reuse an existing OAuth account, link by email, or create it.
+    // Why: Google ID is the stable identity, while email can change over time.
+    // How: prefer googleId, then normalized email, then insert a new profile.
+    const normalizedPayload = {
+      ...payload,
+      email: payload.email.toLowerCase(),
+    };
+    const existingGoogleUser = normalizedPayload.googleId
+      ? await this.userRepo.findByGoogleId(normalizedPayload.googleId)
+      : null;
 
-    if (existingUser) {
-      return existingUser;
+    if (existingGoogleUser) {
+      return existingGoogleUser;
     }
 
-    return this.userRepo.create(payload);
+    const existingEmailUser = await this.userRepo.findByEmail(normalizedPayload.email);
+
+    if (existingEmailUser) {
+      if (!existingEmailUser.googleId && normalizedPayload.googleId) {
+        return this.userRepo.linkGoogleAccount(existingEmailUser._id, {
+          googleId: normalizedPayload.googleId,
+          picture: normalizedPayload.picture || existingEmailUser.picture,
+        });
+      }
+
+      return existingEmailUser;
+    }
+
+    return this.userRepo.create(normalizedPayload);
   }
 
   async registerService(payload) {
-    const existingUser = await this.userRepo.findByEmail(payload.email);
+    const normalizedPayload = {
+      ...payload,
+      email: payload.email.toLowerCase(),
+    };
+    const existingUser = await this.userRepo.findByEmail(normalizedPayload.email);
 
     if (existingUser) {
       throw new AppError("User already exists.", StatusCodes.CONFLICT);
     }
 
-    const newUser = await this.userRepo.create(payload);
+    const newUser = await this.userRepo.create(normalizedPayload);
     const tokenPayload = this.buildTokenPayload(newUser);
     const tokens = this.signTokens(tokenPayload);
 
@@ -80,7 +103,7 @@ export default class AuthService {
   }
 
   async loginService(payload) {
-    const user = await this.userRepo.findByEmail(payload.email);
+    const user = await this.userRepo.findByEmail(payload.email.toLowerCase());
 
     if (!user) {
       throw new NotFound("Email not found.");

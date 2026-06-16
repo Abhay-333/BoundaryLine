@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import env from "../config/env.js";
+import { ROLES } from "../constant/role.constant.js";
 import AppError from "../shared/error/AppError.js";
 
 function getCookieValue(cookieHeader, cookieName) {
@@ -20,7 +21,11 @@ function getCookieValue(cookieHeader, cookieName) {
     return null;
   }
 
-  return decodeURIComponent(cookie.slice(cookieName.length + 1));
+  try {
+    return decodeURIComponent(cookie.slice(cookieName.length + 1));
+  } catch {
+    return null;
+  }
 }
 
 function getAccessToken(req) {
@@ -66,6 +71,11 @@ export function authorizeRoles(allowedRoles = []) {
   return function authorizeRolesMiddleware(req, _res, next) {
     if (!req.user?.role) {
       next(new AppError("Authenticated user role is required", StatusCodes.UNAUTHORIZED));
+      return;
+    }
+
+    if (req.user.role === ROLES.SUPER_ADMIN) {
+      next();
       return;
     }
 
