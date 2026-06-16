@@ -2,17 +2,26 @@ import Match from "../model/match.model.js";
 
 class MatchRepository {
   async findAll() {
-    // What: fetch all active matches.
-    // Why: match management screens need a complete current match list.
-    // How: filter soft-deleted records, sort upcoming first by start time, and return plain objects.
-    return Match.find({ isDeleted: false }).sort({ startTime: 1 }).lean();
+    // What: fetch all active matches with populated team details.
+    // Why: match management screens need team names, logos, etc. alongside match data.
+    // How: filter soft-deleted records, populate team refs, sort by start time, and return plain objects.
+    return Match.find({ isDeleted: false })
+      .populate("team1", "name shortName logo primaryColor")
+      .populate("team2", "name shortName logo primaryColor")
+      .populate("seriesId", "name shortName")
+      .sort({ startTime: 1 })
+      .lean();
   }
 
   async findById(matchId) {
-    // What: fetch one active match by id.
-    // Why: detail/update/delete flows need a precise match lookup.
-    // How: query by `_id` and `isDeleted:false`, then return a plain object.
-    return Match.findOne({ _id: matchId, isDeleted: false }).lean();
+    // What: fetch one active match by id with populated team details.
+    // Why: detail/update/delete flows need a precise match lookup with team info.
+    // How: query by `_id` and `isDeleted:false`, populate team refs, then return a plain object.
+    return Match.findOne({ _id: matchId, isDeleted: false })
+      .populate("team1", "name shortName logo primaryColor")
+      .populate("team2", "name shortName logo primaryColor")
+      .populate("seriesId", "name shortName")
+      .lean();
   }
 
   async create(payload) {
