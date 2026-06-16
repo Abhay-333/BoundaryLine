@@ -10,7 +10,11 @@ class PublicCommentaryController {
   getCommentaryByMatch = asyncHandler(async (req, res) => {
     const { matchId } = req.validated ? req.validated.params : req.params;
     const page = req.validated?.query?.page || req.query.page || 1;
-    const limit = req.validated?.limit || req.query.limit || 50;
+    const limit = req.validated?.query?.limit || req.query.limit || 50;
+
+    if (!matchId) {
+      return res.status(400).json({ success: false, message: "matchId is required" });
+    }
 
     const commentaries = await this.commentaryService.getCommentaryByMatch(
       matchId,
